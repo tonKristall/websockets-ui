@@ -11,6 +11,7 @@ wss.on('connection', (ws: WebSocket) => {
       const data: IWSRegMessage = transformMessage.parse(message);
       await controller(ws, data);
     } catch (e) {
+      console.error(message.toString());
       console.error(e);
     }
   });

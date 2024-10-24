@@ -3,10 +3,10 @@ export const transformMessage = {
     const data = JSON.parse(message);
     return {
       ...data,
-      data: JSON.parse(data.data),
+      data: data.data ? JSON.parse(data.data) : data.data,
     }
   },
-  stringify(message: Record<string, unknown>, data: Record<string, unknown>) {
+  stringify(message: Record<string, unknown>, data: unknown) {
     return JSON.stringify({ ...message, data: JSON.stringify(data) })
   }
 }
