@@ -1,11 +1,11 @@
-import { WebSocket, WebSocketServer } from 'ws';
+import { WebSocketServer } from 'ws';
 import { controller } from './controller';
 import { transformMessage } from "./utils/transformMessage";
-import { IWSRegMessage } from "./models";
+import { IWSRegMessage, IWSWithUser } from "./models";
 
 export const wss = new WebSocketServer({ port: 3000 });
 
-wss.on('connection', (ws: WebSocket) => {
+wss.on('connection', (ws: IWSWithUser) => {
   ws.on('message', async (message: string) => {
     try {
       const data: IWSRegMessage = transformMessage.parse(message);

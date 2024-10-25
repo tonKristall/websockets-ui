@@ -1,7 +1,5 @@
 import { WebSocket } from "ws";
-import { EMessagesTypes, IWSRegMessage } from "../models";
-import { addUser, getUser } from "../../db/users/db";
-import { generateId } from "../utils/generateId";
+import { EMessagesTypes } from "../models";
 import { transformMessage } from "../utils/transformMessage";
 import { getRooms } from "../../db/rooms/db";
 

@@ -10,7 +10,7 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
   if (user) {
     const isError = user.password !== data.password;
     const answer = transformMessage.stringify(
-      { type: 'reg', id: 0 },
+      { type: 'reg', id: user.index },
       {
         name: user.name,
         index: user.index,
@@ -29,7 +29,7 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
     }
     await addUser(newUser);
     const answer = transformMessage.stringify(
-      { type: 'reg', id: 0 },
+      { type: 'reg', id: newUser.index },
       {
         name: newUser.name,
         index: newUser.index,

@@ -1,3 +1,6 @@
+import { WebSocket } from "ws";
+import { IUser } from "../db/users/types";
+
 export enum EMessagesTypes {
   REG = 'reg',
   UPDATE_ROOM = 'update_room',
@@ -21,3 +24,7 @@ export interface IWSAddUserToRoomMessage {
 }
 
 export type TWSMessage = IWSRegMessage | IWSCreateRoomMessage | IWSAddUserToRoomMessage;
+
+export interface IWSWithUser extends WebSocket {
+  user?: IUser
+}

@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'fs/promises';
-import { IRoom, IRoomUser } from './types';
+import { IRoom } from './types';
 
 const filePath = './src/db/rooms/data.json';
 
@@ -26,13 +26,8 @@ export const addRoom = async (room: IRoom): Promise<void> => {
   }
 };
 
-export const addToRoom = async (roomId: string, user: IRoomUser): Promise<void> => {
-  const rooms = await getRooms();
-  const room = rooms.find((room) => room.roomId === roomId);
-  if (room) {
-    room.roomUsers.push(user);
-    await writeFile(filePath, JSON.stringify(rooms, null, 2));
-  }
+export const updateRooms = async (rooms: IRoom[]): Promise<void> => {
+  await writeFile(filePath, JSON.stringify(rooms, null, 2));
 }
 
 export const removeRoom = async (roomId: string): Promise<void> => {
