@@ -1,11 +1,15 @@
 import { WebSocketServer } from 'ws';
 import { controller } from './controller';
 import { transformMessage } from "./utils/transformMessage";
-import { IWSRegMessage, IWSWithUser } from "./models";
+import { EMessagesTypes, IWSRegMessage, IWSWithUser } from "./models";
+import { IUser } from "../db/users/types";
+import { clients } from "./store";
 
 export const wss = new WebSocketServer({ port: 3000 });
 
 wss.on('connection', (ws: IWSWithUser) => {
+  clients.add(ws);
+
   ws.on('message', async (message: string) => {
     try {
       const data: IWSRegMessage = transformMessage.parse(message);
@@ -17,6 +21,7 @@ wss.on('connection', (ws: IWSWithUser) => {
   });
 
   ws.on('close', () => {
+    clients.delete(ws);
     console.log('Client disconnected');
   });
 });
@@ -24,3 +29,7 @@ wss.on('connection', (ws: IWSWithUser) => {
 wss.on('listening', () => {
   console.log(`WebSocket server started on port ${wss.options.port}`);
 });
+
+wss.on(EMessagesTypes.CREATE_GAME, (clients: [IUser, IUser]) => {
+  console.log('create game');
+})
