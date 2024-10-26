@@ -1,9 +1,9 @@
-import { WebSocket } from "ws";
-import { EMessagesTypes, IWSRegMessage } from "../models";
-import { addUser, getUser } from "../../db/users/db";
-import { generateId } from "../utils/generateId";
-import { transformMessage } from "../utils/transformMessage";
-import { IUser } from "../../db/users/types";
+import { WebSocket } from 'ws';
+import { EMessagesTypes, IWSRegMessage } from '../models';
+import { addUser, getUser } from '../../db/users/db';
+import { generateId } from '../utils/generateId';
+import { transformMessage } from '../utils/transformMessage';
+import { IUser } from '../../db/users/types';
 
 export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
   const user = await getUser(data.name);
@@ -16,7 +16,7 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
         index: user.index,
         error: isError,
         errorText: isError ? 'Wrong password' : '',
-      })
+      });
     ws.send(answer);
     console.log('reg: ' + (isError ? `wrong password for user ${data.name}: ${data.password}` : `user ${data.name} is authorized`));
     return isError ? null : user;
@@ -25,8 +25,8 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
     const newUser: IUser = {
       index,
       name: data.name,
-      password: data.password
-    }
+      password: data.password,
+    };
     await addUser(newUser);
     const answer = transformMessage.stringify(
       { type: 'reg', id: newUser.index },
@@ -35,9 +35,9 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
         index: newUser.index,
         error: false,
         errorText: '',
-      })
+      });
     ws.send(answer);
-    console.log(`${EMessagesTypes.REG}: registration new user ${newUser.index}`)
+    console.log(`${EMessagesTypes.REG}: registration new user ${newUser.index}`);
     return newUser;
   }
 };

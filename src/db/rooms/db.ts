@@ -1,43 +1,46 @@
 import { readFile, writeFile } from 'fs/promises';
+import { TRoomList } from './types';
 import { IRoom } from './types';
 
 const filePath = './src/db/rooms/data.json';
 
-export const getRooms = async (): Promise<IRoom[]> => {
+export const getRooms = async (): Promise<TRoomList> => {
   try {
     const data = await readFile(filePath, 'utf-8');
-    return (JSON.parse(data) || []) as IRoom[];
+    return JSON.parse(data) || {};
   } catch (error) {
-    return [];
+    return {};
   }
 };
 
 export const getRoom = async (roomId: string): Promise<IRoom | undefined> => {
   const rooms = await getRooms();
-  return rooms.find((room) => room.roomId === roomId);
+  return rooms[roomId];
 };
 
 export const addRoom = async (room: IRoom): Promise<void> => {
   try {
     const rooms = await getRooms();
-    rooms.push(room);
+    rooms[room.roomId] = room;
     await writeFile(filePath, JSON.stringify(rooms, null, 2));
   } catch (err) {
   }
 };
 
-export const updateRooms = async (rooms: IRoom[]): Promise<void> => {
+export const updateRoom = async (room: IRoom): Promise<void> => {
+  const rooms = await getRooms();
+  rooms[room.roomId] = room;
   await writeFile(filePath, JSON.stringify(rooms, null, 2));
-}
+};
 
 export const removeRoom = async (roomId: string): Promise<void> => {
   try {
     const rooms = await getRooms();
-    const newRooms = rooms.filter((room) => room.roomId !== roomId);
-    await writeFile(filePath, JSON.stringify(newRooms, null, 2));
+    delete rooms [roomId];
+    await writeFile(filePath, JSON.stringify(rooms, null, 2));
   } catch (err) {
   }
-}
+};
 
 export const clearRooms = async (): Promise<void> => {
   try {
