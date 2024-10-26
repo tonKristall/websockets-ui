@@ -1,16 +1,16 @@
 import { WebSocket } from 'ws';
-import { EMessagesTypes, IWSRegMessage } from '../models';
+import { EMessagesTypes, IWSRegRequest, IWSRegResponse } from '../models';
 import { addUser, getUser } from '../../db/users/db';
 import { generateId } from '../utils/generateId';
 import { transformMessage } from '../utils/transformMessage';
 import { IUser } from '../../db/users/types';
 
-export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
+export const reg = async (ws: WebSocket, data: IWSRegRequest['data']) => {
   const user = await getUser(data.name);
   if (user) {
     const isError = user.password !== data.password;
-    const answer = transformMessage.stringify(
-      { type: 'reg', id: user.index },
+    const answer = transformMessage.stringify<IWSRegResponse>(
+      { type: EMessagesTypes.REG },
       {
         name: user.name,
         index: user.index,
@@ -28,8 +28,8 @@ export const reg = async (ws: WebSocket, data: IWSRegMessage['data']) => {
       password: data.password,
     };
     await addUser(newUser);
-    const answer = transformMessage.stringify(
-      { type: 'reg', id: newUser.index },
+    const answer = transformMessage.stringify<IWSRegResponse>(
+      { type: EMessagesTypes.REG },
       {
         name: newUser.name,
         index: newUser.index,

@@ -1,12 +1,14 @@
-import { EMessagesTypes, IPlayer } from '../models';
+import { EMessagesTypes, IPlayer, IWSStartGameResponse } from '../models';
 import { transformMessage } from '../utils/transformMessage';
 
 export const startGame = (players: IPlayer[]) => {
-  players.forEach(({ player, client }) => {
-    const message = transformMessage.stringify(
-      { type: EMessagesTypes.START_GAME, id: 0 },
-      { ships: player.ships, currentPlayerIndex: player.indexPlayer },
-    );
-    client.send(message);
+  players.forEach(({ indexPlayer, client, ships }) => {
+    if (ships) {
+      const message = transformMessage.stringify<IWSStartGameResponse>(
+        { type: EMessagesTypes.START_GAME },
+        { ships: ships[0], currentPlayerIndex: indexPlayer },
+      );
+      client.send(message);
+    }
   });
 };

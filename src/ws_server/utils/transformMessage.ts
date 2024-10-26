@@ -1,3 +1,5 @@
+import { TWSResponse } from '../models';
+
 export const transformMessage = {
   parse(message: string) {
     const data = JSON.parse(message);
@@ -6,7 +8,7 @@ export const transformMessage = {
       data: data.data ? JSON.parse(data.data) : data.data,
     };
   },
-  stringify(message: Record<string, unknown>, data: unknown) {
-    return JSON.stringify({ ...message, data: JSON.stringify(data) });
+  stringify<T extends TWSResponse>(message: Omit<T, 'data'>, data: T['data']) {
+    return JSON.stringify({ ...message, data: JSON.stringify(data), id: 0 });
   },
 };

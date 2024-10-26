@@ -10,6 +10,6 @@ export const createRoom = async (user: IUser) => {
     roomUsers: [user] as IRoom['roomUsers'],
   };
   await addRoom(room);
-  console.log(`${EMessagesTypes.CREATE_ROOM}: created room ${room.roomId}`);
+  console.log(`${EMessagesTypes.CREATE_ROOM}: user ${user.name} created room ${room.roomId}`);
   return room;
 };

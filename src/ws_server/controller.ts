@@ -1,5 +1,9 @@
 import { reg } from './handlers/reg';
-import { EMessagesTypes, IWSWithUser, TWSMessage } from './models';
+import {
+  EMessagesTypes,
+  IWSWithUser,
+  TWSRequest,
+} from './models';
 import { updateRoom } from './handlers/updateRoom';
 import { createRoom } from './handlers/createRoom';
 import { addUserToRoom } from './handlers/addUserToRoom';
@@ -7,9 +11,10 @@ import { createGame } from './handlers/createGame';
 import { addShips } from './handlers/addShips';
 import { startGame } from './handlers/startGame';
 import { turn } from './handlers/turn';
+import { attack } from './handlers/attack';
+import { randomAttack } from './handlers/randomAttack';
 
-export const controller = async (ws: IWSWithUser, message: TWSMessage) => {
-  console.log(message);
+export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
   switch (message.type) {
     case EMessagesTypes.REG:
       const user = await reg(ws, message.data);
@@ -43,9 +48,18 @@ export const controller = async (ws: IWSWithUser, message: TWSMessage) => {
       break;
     case EMessagesTypes.ADD_SHIPS:
       const game = addShips(message.data);
-      if (game.every((player) => player.player.ships)) {
+      if (game.every((player) => player.ships)) {
         startGame(game);
         turn(message.data.gameId);
+      }
+      break;
+    case EMessagesTypes.ATTACK:
+      attack(message.data);
+      break;
+    case EMessagesTypes.RANDOM_ATTACK:
+      const randomAttackMessage = randomAttack(message.data);
+      if (randomAttackMessage) {
+        attack(randomAttackMessage);
       }
       break;
     default:
