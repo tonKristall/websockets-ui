@@ -13,6 +13,8 @@ export enum EMessagesTypes {
   TURN = 'turn',
   ATTACK = 'attack',
   RANDOM_ATTACK = 'randomAttack',
+  FINISH_GAME = 'finish',
+  UPDATE_WINNERS = 'update_winners',
 }
 
 export enum EAttackStatus {
@@ -88,7 +90,7 @@ export type TWSRequest =
   | IWSRandomAttackRequest;
 
 export interface IWSRegResponse {
-  type: 'reg',
+  type: EMessagesTypes.REG,
   data: {
     name: string,
     index: string,
@@ -131,6 +133,18 @@ export interface IWSAttackResponse {
   },
 }
 
+export interface IWSFinishGameResponse {
+  type: EMessagesTypes.FINISH_GAME,
+  data: {
+    winPlayer: string,
+  },
+}
+
+export interface IWSUpdateWinnersResponse {
+  type: EMessagesTypes.UPDATE_WINNERS,
+  data: Array<{ name: string, wins: number }>,
+}
+
 export type TWSResponse =
   | IWSRegResponse
   | IWSUpdateRoomResponse
@@ -138,10 +152,11 @@ export type TWSResponse =
   | IWSStartGameResponse
   | IWSTurnResponse
   | IWSAttackResponse
+  | IWSFinishGameResponse
+  | IWSUpdateWinnersResponse;
 
 export interface IWSWithUser extends WebSocket {
   user?: IUser;
-  ships?: IShip[] | null;
 }
 
 export interface IField extends IPosition {

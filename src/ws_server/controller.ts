@@ -13,6 +13,7 @@ import { startGame } from './handlers/startGame';
 import { turn } from './handlers/turn';
 import { attack } from './handlers/attack';
 import { randomAttack } from './handlers/randomAttack';
+import { updateWinners } from './handlers/updateWinners';
 
 export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
   switch (message.type) {
@@ -23,6 +24,7 @@ export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
       }
       ws.user = user;
       await updateRoom();
+      await updateWinners();
       break;
     case EMessagesTypes.CREATE_ROOM:
       if (!ws.user) {
@@ -54,12 +56,12 @@ export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
       }
       break;
     case EMessagesTypes.ATTACK:
-      attack(message.data);
+      await attack(message.data);
       break;
     case EMessagesTypes.RANDOM_ATTACK:
       const randomAttackMessage = randomAttack(message.data);
       if (randomAttackMessage) {
-        attack(randomAttackMessage);
+        await attack(randomAttackMessage);
       }
       break;
     default:

@@ -3,6 +3,7 @@ import { games } from '../store';
 import { transformMessage } from '../utils/transformMessage';
 import { turn } from './turn';
 import { getSurroundingCells } from '../utils/getSurroundingCells';
+import { finishGame } from './finishGame';
 
 const getResponse = (message: IWSAttackRequest['data'], status: EAttackStatus) => {
   return transformMessage.stringify<IWSAttackResponse>(
@@ -15,7 +16,7 @@ const getResponse = (message: IWSAttackRequest['data'], status: EAttackStatus) =
   );
 };
 
-export const attack = (message: IWSAttackRequest['data']) => {
+export const attack = async (message: IWSAttackRequest['data']) => {
   const isTurnPlayer = games[message.gameId][message.indexPlayer].isTurn;
   if (!isTurnPlayer) {
     return;
@@ -79,8 +80,11 @@ export const attack = (message: IWSAttackRequest['data']) => {
       client.send(resp);
     });
     const isChangeTurn = index === 0 && !ship;
+    console.log(`${EMessagesTypes.ATTACK}: player ${message.indexPlayer} ${isChangeTurn ? EAttackStatus.MISS : EAttackStatus.SHOT} position (${message.x}, ${message.y}) `);
     turn(message.gameId, isChangeTurn);
   });
-
-  console.log(`${EMessagesTypes.ATTACK}: attack position: (${message.x}, ${message.y})`);
+  const isFinish = enemyShips.every((ship) => ship.every((s) => s.isShoot));
+  if (isFinish) {
+    await finishGame(message.gameId, message.indexPlayer);
+  }
 };

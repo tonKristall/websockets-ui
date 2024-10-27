@@ -4,6 +4,7 @@ import { addUser, getUser } from '../../db/users/db';
 import { generateId } from '../utils/generateId';
 import { transformMessage } from '../utils/transformMessage';
 import { IUser } from '../../db/users/types';
+import { addWinner } from '../../db/winners/db';
 
 export const reg = async (ws: WebSocket, data: IWSRegRequest['data']) => {
   const user = await getUser(data.name);
@@ -28,6 +29,7 @@ export const reg = async (ws: WebSocket, data: IWSRegRequest['data']) => {
       password: data.password,
     };
     await addUser(newUser);
+    await addWinner(newUser.name);
     const answer = transformMessage.stringify<IWSRegResponse>(
       { type: EMessagesTypes.REG },
       {
