@@ -9,7 +9,7 @@ export const updateWinners = async () => {
     { type: EMessagesTypes.UPDATE_WINNERS },
     winners,
   );
-  console.log(winners);
+
   clients.forEach((client) => {
     client.send(response);
   });

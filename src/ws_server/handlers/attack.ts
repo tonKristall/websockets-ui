@@ -66,13 +66,16 @@ export const attack = async (message: IWSAttackRequest['data']) => {
         const response = getResponse(answer, EAttackStatus.MISS);
         responses.push(response);
       });
+      console.log(`${EMessagesTypes.ATTACK}: player ${message.indexPlayer} ${EAttackStatus.KILLED} position (${message.x}, ${message.y}) `);
     } else {
       const response = getResponse(message, EAttackStatus.SHOT);
       responses.push(response);
+      console.log(`${EMessagesTypes.ATTACK}: player ${message.indexPlayer} ${EAttackStatus.SHOT} position (${message.x}, ${message.y}) `);
     }
   } else {
     const response = getResponse(message, EAttackStatus.MISS);
     responses.push(response);
+    console.log(`${EMessagesTypes.ATTACK}: player ${message.indexPlayer} ${EAttackStatus.MISS} position (${message.x}, ${message.y}) `);
   }
 
   responses.forEach((resp, index) => {
@@ -80,7 +83,6 @@ export const attack = async (message: IWSAttackRequest['data']) => {
       client.send(resp);
     });
     const isChangeTurn = index === 0 && !ship;
-    console.log(`${EMessagesTypes.ATTACK}: player ${message.indexPlayer} ${isChangeTurn ? EAttackStatus.MISS : EAttackStatus.SHOT} position (${message.x}, ${message.y}) `);
     turn(message.gameId, isChangeTurn);
   });
   const isFinish = enemyShips.every((ship) => ship.every((s) => s.isShoot));

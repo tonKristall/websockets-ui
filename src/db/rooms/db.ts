@@ -27,24 +27,11 @@ export const addRoom = async (room: IRoom): Promise<void> => {
   }
 };
 
-export const updateRoom = async (room: IRoom): Promise<void> => {
-  const rooms = await getRooms();
-  rooms[room.roomId] = room;
-  await writeFile(filePath, JSON.stringify(rooms, null, 2));
-};
-
 export const removeRoom = async (roomId: string): Promise<void> => {
   try {
     const rooms = await getRooms();
     delete rooms [roomId];
     await writeFile(filePath, JSON.stringify(rooms, null, 2));
-  } catch (err) {
-  }
-};
-
-export const clearRooms = async (): Promise<void> => {
-  try {
-    await writeFile(filePath, JSON.stringify([]));
   } catch (err) {
   }
 };
