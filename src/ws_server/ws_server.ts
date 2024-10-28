@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { controller } from './controller';
 import { transformMessage } from './utils/transformMessage';
-import { EMessagesTypes, IWSRegRequest, IWSWithUser } from './models';
+import { IWSRegRequest, IWSWithUser } from './models';
 import { clients } from './store';
 
 export const wss = new WebSocketServer({ port: 3000 });
@@ -27,8 +27,4 @@ wss.on('connection', (ws: IWSWithUser) => {
 
 wss.on('listening', () => {
   console.log(`WebSocket server started on port ${wss.options.port}`);
-});
-
-wss.on(EMessagesTypes.CREATE_GAME, () => {
-  console.log('create game');
 });

@@ -2,6 +2,11 @@ import { WebSocket } from 'ws';
 import { IUser } from '../db/users/types';
 import { IRoom } from '../db/rooms/types';
 
+export enum ETypePlayers {
+  user = 'user',
+  bot = 'bot',
+}
+
 export enum EMessagesTypes {
   REG = 'reg',
   UPDATE_ROOM = 'update_room',
@@ -15,6 +20,7 @@ export enum EMessagesTypes {
   RANDOM_ATTACK = 'randomAttack',
   FINISH_GAME = 'finish',
   UPDATE_WINNERS = 'update_winners',
+  SINGLE_PLAY = 'single_play',
 }
 
 export enum EAttackStatus {
@@ -81,13 +87,20 @@ export interface IWSRandomAttackRequest {
   };
 }
 
+export interface IWSSinglePlayRequest {
+  'type': EMessagesTypes.SINGLE_PLAY,
+  'data': '',
+  'id': 0
+}
+
 export type TWSRequest =
   | IWSRegRequest
   | IWSCreateRoomRequest
   | IWSAddUserToRoomRequest
   | IWSAddShipsRequest
   | IWSAttackRequest
-  | IWSRandomAttackRequest;
+  | IWSRandomAttackRequest
+  | IWSSinglePlayRequest;
 
 export interface IWSRegResponse {
   type: EMessagesTypes.REG,
@@ -164,8 +177,19 @@ export interface IField extends IPosition {
 }
 
 export interface IPlayer extends Omit<IWSAddShipsRequest['data'], 'ships'> {
+  type: ETypePlayers.user,
   client: IWSWithUser,
   ships?: Array<IShipWithStatus[]>,
   isTurn: boolean,
+  field: IField[],
+}
+
+export interface IBot extends Omit<IWSAddShipsRequest['data'], 'ships'> {
+  type: ETypePlayers.bot,
+  client: null
+  ships: Array<IShipWithStatus[]>,
+  isTurn: boolean,
   field: IField[]
 }
+
+export type TPlayer = IPlayer | IBot;

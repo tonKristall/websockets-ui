@@ -14,6 +14,7 @@ import { turn } from './handlers/turn';
 import { attack } from './handlers/attack';
 import { randomAttack } from './handlers/randomAttack';
 import { updateWinners } from './handlers/updateWinners';
+import { createGameWithBot } from './handlers/createGameWithBot';
 
 export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
   switch (message.type) {
@@ -52,17 +53,20 @@ export const controller = async (ws: IWSWithUser, message: TWSRequest) => {
       const game = addShips(message.data);
       if (game.every((player) => player.ships)) {
         startGame(game);
-        turn(message.data.gameId);
+        await turn(message.data.gameId);
       }
       break;
     case EMessagesTypes.ATTACK:
       await attack(message.data);
       break;
     case EMessagesTypes.RANDOM_ATTACK:
-      const randomAttackMessage = randomAttack(message.data);
-      if (randomAttackMessage) {
-        await attack(randomAttackMessage);
+      await randomAttack(message.data);
+      break;
+    case EMessagesTypes.SINGLE_PLAY:
+      if (!ws.user) {
+        break;
       }
+      createGameWithBot(ws.user);
       break;
     default:
       console.log(`Unknown request type: ${JSON.stringify(message)}`);

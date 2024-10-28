@@ -1,4 +1,4 @@
-import { EMessagesTypes, IWSCreateGameResponse } from '../models';
+import { EMessagesTypes, ETypePlayers, IPlayer, IWSCreateGameResponse } from '../models';
 import { generateId } from '../utils/generateId';
 import { IRoomUser } from '../../db/rooms/types';
 import { clients, games } from '../store';
@@ -15,23 +15,20 @@ export const createGame = (user1: IRoomUser, user2: IRoomUser) => {
         { idGame, idPlayer },
       );
 
+      const player: IPlayer = {
+        type: ETypePlayers.user,
+        client,
+        indexPlayer: idPlayer,
+        gameId: idGame,
+        isTurn: !games[idGame],
+        field: initField(),
+      };
+
       if (games[idGame]) {
-        games[idGame][idPlayer] = {
-          client,
-          indexPlayer: idPlayer,
-          gameId: idGame,
-          isTurn: false,
-          field: initField(),
-        };
+        games[idGame][idPlayer] = player;
       } else {
         games[idGame] = {
-          [idPlayer]: {
-            client,
-            indexPlayer: idPlayer,
-            gameId: idGame,
-            isTurn: true,
-            field: initField(),
-          },
+          [idPlayer]: player,
         };
       }
 

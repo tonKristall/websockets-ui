@@ -17,7 +17,7 @@ const getResponse = (message: IWSAttackRequest['data'], status: EAttackStatus) =
 };
 
 export const attack = async (message: IWSAttackRequest['data']) => {
-  const isTurnPlayer = games[message.gameId][message.indexPlayer].isTurn;
+  const isTurnPlayer = games[message.gameId]?.[message.indexPlayer]?.isTurn;
   if (!isTurnPlayer) {
     return;
   }
@@ -30,7 +30,7 @@ export const attack = async (message: IWSAttackRequest['data']) => {
 
   const fieldIndex = enemy.field.findIndex((cell) => cell.x === message.x && cell.y === message.y);
   if (fieldIndex === -1 || enemy.field[fieldIndex].isShoot) {
-    turn(message.gameId);
+    await turn(message.gameId);
     return;
   }
 
@@ -80,7 +80,7 @@ export const attack = async (message: IWSAttackRequest['data']) => {
 
   responses.forEach((resp, index) => {
     game.forEach(({ client }) => {
-      client.send(resp);
+      client && client.send(resp);
     });
     const isChangeTurn = index === 0 && !ship;
     turn(message.gameId, isChangeTurn);

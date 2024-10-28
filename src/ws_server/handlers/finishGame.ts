@@ -14,10 +14,11 @@ export const finishGame = async (gameId: string, winPlayer: string) => {
     });
 
   game.forEach(({ client }) => {
-    client.send(response);
+    client && client.send(response);
   });
-  console.log(winName);
+
   if (winName) {
+    console.log(`User ${winName} is win`);
     await addWinner(winName);
   }
   await updateWinners();

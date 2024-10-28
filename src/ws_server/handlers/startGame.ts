@@ -1,14 +1,14 @@
-import { EMessagesTypes, IPlayer, IWSStartGameResponse } from '../models';
+import { EMessagesTypes, ETypePlayers, IWSStartGameResponse, TPlayer } from '../models';
 import { transformMessage } from '../utils/transformMessage';
 
-export const startGame = (players: IPlayer[]) => {
-  players.forEach(({ indexPlayer, client, ships }) => {
-    if (ships) {
+export const startGame = (players: TPlayer[]) => {
+  players.forEach((player) => {
+    if (player.type === ETypePlayers.user && player.ships) {
       const message = transformMessage.stringify<IWSStartGameResponse>(
         { type: EMessagesTypes.START_GAME },
-        { ships: ships[0], currentPlayerIndex: indexPlayer },
+        { ships: player.ships[0], currentPlayerIndex: player.indexPlayer },
       );
-      client.send(message);
+      player.client.send(message);
     }
   });
 };
